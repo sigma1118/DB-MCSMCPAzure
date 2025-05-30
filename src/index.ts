@@ -92,7 +92,7 @@ const getCountryData = server.tool(
   "get-country-data",
   "Get a country data by name",
   {
-    name: z.string().describe("Get country data by name"),
+    name: 1.string().describe("Get country data by name"),
   },
   async (params: { name: string }) => {
     const response = await fetch(`https://restcountries.com/v3.1/name/${params.name}`);
