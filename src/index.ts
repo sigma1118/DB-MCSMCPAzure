@@ -48,17 +48,19 @@ const server = new McpServer({
 //City info
 const getCityInfo = server.tool(
   "get-city-info",
-  "Get basic travel information for a city using GeoNames API (no API key required)",
-  async (input: { city: string }) => {
-    const city = input.city;
+  {
+    city: z.string().describe("City name to fetch information"),
+  },
+  async (params: { city: string }) => {
+    const city = params.city;
     if (!city) {
       return {
         content: [
           {
             type: "text",
-            text: "Please provide a city name."
-          }
-        ]
+            text: "Please provide a city name.",
+          },
+        ],
       };
     }
 
@@ -81,9 +83,9 @@ const getCityInfo = server.tool(
         content: [
           {
             type: "text",
-            text: `${result.name}, ${result.countryName} — Population: ${result.population}, Coordinates: (${result.lat}, ${result.lng})`
-          }
-        ]
+            text: `${result.name}, ${result.countryName} — Population: ${result.population}, Coordinates: (${result.lat}, ${result.lng})`,
+          },
+        ],
       };
     } catch (error: unknown) {
       const message =
@@ -92,9 +94,9 @@ const getCityInfo = server.tool(
         content: [
           {
             type: "text",
-            text: `Error fetching data for ${city}: ${message}`
-          }
-        ]
+            text: `Error fetching data for ${city}: ${message}`,
+          },
+        ],
       };
     }
   }
