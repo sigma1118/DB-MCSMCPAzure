@@ -40,12 +40,14 @@ const server = new McpServer({
     },
   ],
 });
-//Zip Code Tool
+// Zip Code Tool
 const getZipInfo = server.tool(
   "get-zip-info",
-  "Get the city and state for a US ZIP code (example: 90210)",
-  async (input: { zip: string }) => {
-    const zip = input.zip;
+  {
+    zip: z.string().describe("A valid US ZIP code"),
+  },
+  async (params: { zip: string }) => {
+    const zip = params.zip;
     if (!zip) {
       return {
         content: [
