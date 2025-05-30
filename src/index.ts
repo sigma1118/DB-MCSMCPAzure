@@ -39,69 +39,115 @@ const server = new McpServer({
       parameters: {},
     },
      {
-      name: "get-city-details",
-      description: "Get basic information about a city using OpenStreetMap Nominatim API (no API key required)",
+      name: "get-pois",
+      description: "Get points of interest for a city using OpenTripMap API",
       parameters: {},
     },
   ],
 });
-const getCityDetails = server.tool(
-  "get-city-details",
-  "Get basic information about a city using OpenStreetMap Nominatim API (no API key required)",
-  async (input: { city: string }) => {
-    const city = input.city;
+const getPOIs = server.tool(
+  "get-pois",
+  {
+    city: z.string().describe("The name of the city to get points of interest for"),
+  },
+  async (params: { city: string }) => {
+    const city = params.city;
     if (!city) {
       return {
         content: [
           {
             type: "text",
-            text: "Please provide a city name.",
-          },
-        ],
+            text: "Please provide a city name."
+          }
+        ]
       };
     }
 
     try {
-      const response = await fetch(`https://nominatim.openstreetmap.org/search?city=${city}&format=json`);
-      const data = await response.json();
-      if (!data || data.length === 0) {
-        return {
-          content: [
-            {
-              type: "text",
-              text: `No data found for city: ${city}`,
-            },
-          ],
-        };
-      }
+      // Step 1: Get coordinates for the city
+      const geoRes = await fetch(`https://nominatim.openstreetmap.org/search?city=${encodeURIComponent(city)}&format=json&limit=1`);
+      const geoData = await geoRes.json();
+      if (!geoData.length) throw new Error("City not found");
 
-      const cityDetails = data[0];
+      const { lat, lon } = geoData[0];
+
+      // Step 2: Get POIs near the city
+      const poiRes = await fetch(`https://api.opentripmap.com/0.1/en/places/radius?radius=1000&lon=${lon}&lat=${lat}&limit=5`);
+      const poiData = await poiRes.json();
+
+      const places = poiData.features?.map((p: any) => p.properties.name).filter(Boolean);
+
       return {
         content: [
           {
             type: "text",
-            text: `City: ${cityDetails.display_name}`,
-          },
+            text: `Top places to visit in ${city}: ${places?.join(", ") || "No points of interest found."}`
+          }
+        ]
+      };
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : "An unknown error occurred";
+      return {
+        content: [
           {
             type: "text",
-            text: `Latitude: ${cityDetails.lat}, Longitude: ${cityDetails.lon}`,
-          },
-        ],
+            text: `Error fetching POIs for ${city}: ${message}`
+          }
+        ]
       };
-    } catch (error) {
+    }
+  }
+);
+
+// Zip Code Tool
+const getZipInfo = server.tool(
+  "get-zip-info",
+  {
+    zip: z.string().describe("A valid US ZIP code"),
+  },
+  async (params: { zip: string }) => {
+    const zip = params.zip;
+    if (!zip) {
+      return {
+        content: [
+          {
+            type: "text",
+            text: "Please provide a ZIP code."
+          }
+        ]
+      };
+    }
+
+    try {
+      const response = await fetch(`http://api.zippopotam.us/us/${zip}`);
+      if (!response.ok) {
+        throw new Error("ZIP code not found");
+      }
+      const data = await response.json();
+      const place = data.places[0];
+      return {
+        content: [
+          {
+            type: "text",
+            text: `${zip}: ${place["place name"]}, ${place["state abbreviation"]}`
+          }
+        ]
+      };
+    } catch (error: unknown) {
       const message =
         error instanceof Error ? error.message : "An unknown error occurred";
       return {
         content: [
           {
             type: "text",
-            text: `Error fetching data for city ${city}: ${message}`,
-          },
-        ],
+            text: `Error fetching data for ZIP code ${zip}: ${message}`
+          }
+        ]
       };
     }
   }
 );
+
 // Get Chuck Norris joke tool
 const getChuckJoke = server.tool(
   "get-chuck-joke",
