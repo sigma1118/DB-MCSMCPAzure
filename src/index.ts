@@ -34,29 +34,42 @@ const server = new McpServer({
       parameters: {},
     },
      {
-      name: "get-exchange-rate",
-      description: "Get the current EUR/USD exchange rate",
+      name: "get-random-word-nokey",
+      description: "Get a random English word and its definition",
       parameters: {},
     },
   ],
 });
-// Get current EUR/USD exchange rate tool
-const getExchangeRate = server.tool(
-  "get-exchange-rate",
-  "Get the current EUR/USD exchange rate",
+// Get a random word (with definition) tool – no API key required
+const getRandomWordNoKey = server.tool(
+  "get-random-word-nokey",
+  "Get a random English word and its definition",
   async () => {
-    const response = await fetch("https://www.freeforexapi.com/api/live?pairs=EURUSD");
-    const data = await response.json();
+    // Fetch a random word from a free API
+    const wordResponse = await fetch("https://random-word-api.herokuapp.com/word?number=1");
+    const wordData = await wordResponse.json();
+    const randomWord = wordData[0];
+
+    // Fetch the definition of the random word from a free dictionary API
+    const defResponse = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${randomWord}`);
+    const defData = await defResponse.json();
+    let definition = "(no definition found)";
+    if (Array.isArray(defData) && defData[0]?.meanings?.[0]?.definitions?.[0]?.definition) {
+      definition = defData[0].meanings[0].definitions[0].definition;
+    }
+
+    // Return the word and its definition
     return {
       content: [
         {
           type: "text",
-          text: `Current EUR/USD rate: ${data.rates["EURUSD"].rate}`,
-        },
-      ],
+          text: `${randomWord}: ${definition}`
+        }
+      ]
     };
   }
 );
+
 // Get Chuck Norris joke tool
 const getChuckJoke = server.tool(
   "get-chuck-joke",
