@@ -70,7 +70,6 @@ const getChuckCategories = server.tool(
     };
   }
 );
-
 // Get Dad joke tool
 const getDadJoke = server.tool(
   "get-dad-joke",
