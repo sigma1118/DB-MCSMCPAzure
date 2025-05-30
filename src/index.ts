@@ -47,17 +47,19 @@ const server = new McpServer({
 });
 const getCityDetails = server.tool(
   "get-city-details",
-  "Get basic information about a city using OpenStreetMap Nominatim API (no API key required)",
-  async (input: { city: string }) => {
-    const city = input.city;
+  {
+    city: z.string().describe("The name of the city to fetch details for"),
+  },
+  async (params: { city: string }) => {
+    const city = params.city;
     if (!city) {
       return {
         content: [
           {
             type: "text",
-            text: "Please provide a city name."
-          }
-        ]
+            text: "Please provide a city name.",
+          },
+        ],
       };
     }
 
@@ -73,9 +75,9 @@ const getCityDetails = server.tool(
         content: [
           {
             type: "text",
-            text: `${result.display_name} — Coordinates: (${result.lat}, ${result.lon})`
-          }
-        ]
+            text: `${result.display_name} — Coordinates: (${result.lat}, ${result.lon})`,
+          },
+        ],
       };
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : "An unknown error occurred";
@@ -83,14 +85,13 @@ const getCityDetails = server.tool(
         content: [
           {
             type: "text",
-            text: `Error fetching city info: ${message}`
-          }
-        ]
+            text: `Error fetching city info: ${message}`,
+          },
+        ],
       };
     }
   }
 );
-
 // Zip Code Tool
 const getZipInfo = server.tool(
   "get-zip-info",
