@@ -55,7 +55,6 @@ const getZipInfo = server.tool(
         ]
       };
     }
-
     try {
       const response = await fetch(`http://api.zippopotam.us/us/${zip}`);
       if (!response.ok) {
