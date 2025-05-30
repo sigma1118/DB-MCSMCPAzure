@@ -40,22 +40,47 @@ const server = new McpServer({
     },
   ],
 });
-// Get city and state for a sample ZIP code (using a free USPS ZIP code API)
 const getZipInfo = server.tool(
   "get-zip-info",
   "Get the city and state for a US ZIP code (example: 90210)",
-  async () => {
-    const response = await fetch("http://api.zippopotam.us/us/90210");
-    const data = await response.json();
-    const place = data.places[0];
-    return {
-      content: [
-        {
-          type: "text",
-          text: `90210: ${place["place name"]}, ${place["state abbreviation"]}`
-        }
-      ]
-    };
+  async (input) => {
+    const zip = input.zip;
+    if (!zip) {
+      return {
+        content: [
+          {
+            type: "text",
+            text: "Please provide a ZIP code."
+          }
+        ]
+      };
+    }
+
+    try {
+      const response = await fetch(`http://api.zippopotam.us/us/${zip}`);
+      if (!response.ok) {
+        throw new Error("ZIP code not found");
+      }
+      const data = await response.json();
+      const place = data.places[0];
+      return {
+        content: [
+          {
+            type: "text",
+            text: `${zip}: ${place["place name"]}, ${place["state abbreviation"]}`
+          }
+        ]
+      };
+    } catch (error) {
+      return {
+        content: [
+          {
+            type: "text",
+            text: `Error fetching data for ZIP code ${zip}: ${error.message}`
+          }
+        ]
+      };
+    }
   }
 );
 
