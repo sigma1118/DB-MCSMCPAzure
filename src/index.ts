@@ -48,57 +48,60 @@ const server = new McpServer({
 const getCityDetails = server.tool(
   "get-city-details",
   "Get basic information about a city using OpenStreetMap Nominatim API (no API key required)",
-  async (input: { city: string }) => { ... }
-);
-// Zip Code Tool
-const getZipInfo = server.tool(
-  "get-zip-info",
-  {
-    zip: z.string().describe("A valid US ZIP code"),
-  },
-  async (params: { zip: string }) => {
-    const zip = params.zip;
-    if (!zip) {
+  async (input: { city: string }) => {
+    const city = input.city;
+    if (!city) {
       return {
         content: [
           {
             type: "text",
-            text: "Please provide a ZIP code."
-          }
-        ]
+            text: "Please provide a city name.",
+          },
+        ],
       };
     }
 
     try {
-      const response = await fetch(`http://api.zippopotam.us/us/${zip}`);
-      if (!response.ok) {
-        throw new Error("ZIP code not found");
-      }
+      const response = await fetch(`https://nominatim.openstreetmap.org/search?city=${city}&format=json`);
       const data = await response.json();
-      const place = data.places[0];
+      if (!data || data.length === 0) {
+        return {
+          content: [
+            {
+              type: "text",
+              text: `No data found for city: ${city}`,
+            },
+          ],
+        };
+      }
+
+      const cityDetails = data[0];
       return {
         content: [
           {
             type: "text",
-            text: `${zip}: ${place["place name"]}, ${place["state abbreviation"]}`
-          }
-        ]
+            text: `City: ${cityDetails.display_name}`,
+          },
+          {
+            type: "text",
+            text: `Latitude: ${cityDetails.lat}, Longitude: ${cityDetails.lon}`,
+          },
+        ],
       };
-    } catch (error: unknown) {
+    } catch (error) {
       const message =
         error instanceof Error ? error.message : "An unknown error occurred";
       return {
         content: [
           {
             type: "text",
-            text: `Error fetching data for ZIP code ${zip}: ${message}`
-          }
-        ]
+            text: `Error fetching data for city ${city}: ${message}`,
+          },
+        ],
       };
     }
   }
 );
-
 // Get Chuck Norris joke tool
 const getChuckJoke = server.tool(
   "get-chuck-joke",
