@@ -47,9 +47,11 @@ const server = new McpServer({
 });
 const getPOIs = server.tool(
   "get-pois",
-  "Get points of interest for a city using OpenTripMap API",
-  async (input: { city: string }) => {
-    const city = input.city;
+  {
+    city: z.string().describe("The name of the city to get points of interest for"),
+  },
+  async (params: { city: string }) => {
+    const city = params.city;
     if (!city) {
       return {
         content: [
