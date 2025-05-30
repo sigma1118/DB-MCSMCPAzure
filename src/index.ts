@@ -33,8 +33,60 @@ const server = new McpServer({
       description: "Get a country data by name",
       parameters: {},
     },
+     {
+      name: "get-zip-info",
+      description: "Get the city and state for a US ZIP code (example: 90210)",
+      parameters: {},
+    },
   ],
 });
+//Zip Code Tool
+const getZipInfo = server.tool(
+  "get-zip-info",
+  "Get the city and state for a US ZIP code (example: 90210)",
+  async (input: { zip: string }) => {
+    const zip = input.zip;
+    if (!zip) {
+      return {
+        content: [
+          {
+            type: "text",
+            text: "Please provide a ZIP code."
+          }
+        ]
+      };
+    }
+
+    try {
+      const response = await fetch(`http://api.zippopotam.us/us/${zip}`);
+      if (!response.ok) {
+        throw new Error("ZIP code not found");
+      }
+      const data = await response.json();
+      const place = data.places[0];
+      return {
+        content: [
+          {
+            type: "text",
+            text: `${zip}: ${place["place name"]}, ${place["state abbreviation"]}`
+          }
+        ]
+      };
+    } catch (error: unknown) {
+      const message =
+        error instanceof Error ? error.message : "An unknown error occurred";
+      return {
+        content: [
+          {
+            type: "text",
+            text: `Error fetching data for ZIP code ${zip}: ${message}`
+          }
+        ]
+      };
+    }
+  }
+);
+
 // Get Chuck Norris joke tool
 const getChuckJoke = server.tool(
   "get-chuck-joke",
