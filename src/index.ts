@@ -33,40 +33,8 @@ const server = new McpServer({
       description: "Get a country data by name",
       parameters: {},
     },
-     {
-      name: "get-zip-info",
-      description: "GGet the city and state for a US ZIP code (example: 90210)",
-      parameters: {},
-    },
   ],
   
-const getZipInfo = server.tool(
-  "get-zip-info",
-  "Get the city and state for a US ZIP code (example: 90210)",
-  async (input: { zip: string }) => {
-    const zip = input.zip;
-    if (!zip) {
-      return {
-        content: [
-          {
-            type: "text",
-            text: "Please provide a ZIP code."
-          }
-        ]
-      };
-    }
-    try {
-      const response = await fetch(`http://api.zippopotam.us/us/${zip}`);
-      const data = await response.json();
-      const place = data.places[0];
-      return {
-        content: [
-          {
-            type: "text",
-            text: `${zip}: ${place["place name"]}, ${place["state abbreviation"]}`
-          }
-        ]
-      };
 // Get Chuck Norris joke tool
 const getChuckJoke = server.tool(
   "get-chuck-joke",
