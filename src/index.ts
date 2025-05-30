@@ -34,36 +34,25 @@ const server = new McpServer({
       parameters: {},
     },
      {
-      name: "get-random-word-nokey",
-      description: "Get a random English word and its definition",
+      name: "get-zip-info",
+      description: "GGet the city and state for a US ZIP code (example: 90210)",
       parameters: {},
     },
   ],
 });
-// Get a random word (with definition) tool – no API key required
-const getRandomWordNoKey = server.tool(
-  "get-random-word-nokey",
-  "Get a random English word and its definition",
+// Get city and state for a sample ZIP code (using a free USPS ZIP code API)
+const getZipInfo = server.tool(
+  "get-zip-info",
+  "Get the city and state for a US ZIP code (example: 90210)",
   async () => {
-    // Fetch a random word from a free API
-    const wordResponse = await fetch("https://random-word-api.herokuapp.com/word?number=1");
-    const wordData = await wordResponse.json();
-    const randomWord = wordData[0];
-
-    // Fetch the definition of the random word from a free dictionary API
-    const defResponse = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${randomWord}`);
-    const defData = await defResponse.json();
-    let definition = "(no definition found)";
-    if (Array.isArray(defData) && defData[0]?.meanings?.[0]?.definitions?.[0]?.definition) {
-      definition = defData[0].meanings[0].definitions[0].definition;
-    }
-
-    // Return the word and its definition
+    const response = await fetch("http://api.zippopotam.us/us/90210");
+    const data = await response.json();
+    const place = data.places[0];
     return {
       content: [
         {
           type: "text",
-          text: `${randomWord}: ${definition}`
+          text: `90210: ${place["place name"]}, ${place["state abbreviation"]}`
         }
       ]
     };
