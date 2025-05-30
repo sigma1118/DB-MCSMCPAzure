@@ -87,7 +87,50 @@ const getDadJoke = server.tool(
     };
   }
 );
-
+// 2025-05-29 - Add get-country-data tool
+const getCountryData = server.tool(
+  "get-country-data",
+  "Get a country data by name",
+  {
+    name: z.string().describe("Get country data by name"),
+  },
+  async (params: { name: string }) => {
+    const response = await fetch(`https://restcountries.com/v3.1/name/${params.name}`);
+    const data = await response.json();
+    const country = Array.isArray(data) && data.length > 0 ? data[0] : null;
+    if (!country) {
+      return {
+        content: [
+          { type: "text", text: `No data found for ${params.name}` },
+        ],
+      };
+    }
+    return {
+      content: [
+        {
+          type: "text",
+          text: country.name?.common || "No name found",
+        },
+        {
+          type: "text",
+          text: country.capital ? country.capital[0] : "No capital found",
+        },
+        {
+          type: "text",
+          text: country.region || "No region found",
+        },
+        {
+          type: "text",
+          text: country.population ? country.population.toLocaleString() : "No population found",
+        },
+        {
+          type: "text",
+          text: country.flags?.png || "No flag found",
+        },
+      ],
+    };
+  }
+);
 // Get Yo Mama joke tool
 const getYoMamaJoke = server.tool(
   "get-yo-mama-joke",
