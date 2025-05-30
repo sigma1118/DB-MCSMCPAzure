@@ -39,19 +39,17 @@ const server = new McpServer({
       parameters: {},
     },
      {
-      name: "get-pois",
-      description: "Get points of interest for a city using OpenTripMap API",
+      name: "get-city-details",
+      description: "Get basic information about a city using OpenStreetMap Nominatim API (no API key required)",
       parameters: {},
     },
   ],
 });
-const getPOIs = server.tool(
-  "get-pois",
-  {
-    city: z.string().describe("The name of the city to get points of interest for"),
-  },
-  async (params: { city: string }) => {
-    const city = params.city;
+const getCityDetails = server.tool(
+  "get-city-details",
+  "Get basic information about a city using OpenStreetMap Nominatim API (no API key required)",
+  async (input: { city: string }) => {
+    const city = input.city;
     if (!city) {
       return {
         content: [
@@ -64,24 +62,18 @@ const getPOIs = server.tool(
     }
 
     try {
-      // Step 1: Get coordinates for the city
-      const geoRes = await fetch(`https://nominatim.openstreetmap.org/search?city=${encodeURIComponent(city)}&format=json&limit=1`);
-      const geoData = await geoRes.json();
-      if (!geoData.length) throw new Error("City not found");
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/search?city=${encodeURIComponent(city)}&format=json&limit=1`
+      );
+      const data = await response.json();
+      if (!data.length) throw new Error("City not found");
 
-      const { lat, lon } = geoData[0];
-
-      // Step 2: Get POIs near the city
-      const poiRes = await fetch(`https://api.opentripmap.com/0.1/en/places/radius?radius=1000&lon=${lon}&lat=${lat}&limit=5`);
-      const poiData = await poiRes.json();
-
-      const places = poiData.features?.map((p: any) => p.properties.name).filter(Boolean);
-
+      const result = data[0];
       return {
         content: [
           {
             type: "text",
-            text: `Top places to visit in ${city}: ${places?.join(", ") || "No points of interest found."}`
+            text: `${result.display_name} — Coordinates: (${result.lat}, ${result.lon})`
           }
         ]
       };
@@ -91,7 +83,7 @@ const getPOIs = server.tool(
         content: [
           {
             type: "text",
-            text: `Error fetching POIs for ${city}: ${message}`
+            text: `Error fetching city info: ${message}`
           }
         ]
       };
