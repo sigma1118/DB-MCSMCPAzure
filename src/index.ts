@@ -38,8 +38,68 @@ const server = new McpServer({
       description: "Get the city and state for a US ZIP code (example: 90210)",
       parameters: {},
     },
+     {
+      name: "get-city-info",
+      description: "Get basic travel information for a city using GeoNames API (no API key required)",
+      parameters: {},
+    },
   ],
 });
+//City info
+const getCityInfo = server.tool(
+  "get-city-info",
+  "Get basic travel information for a city using GeoNames API (no API key required)",
+  async (input: { city: string }) => {
+    const city = input.city;
+    if (!city) {
+      return {
+        content: [
+          {
+            type: "text",
+            text: "Please provide a city name."
+          }
+        ]
+      };
+    }
+
+    try {
+      const response = await fetch(
+        `http://api.geonames.org/searchJSON?q=${encodeURIComponent(city)}&maxRows=1&username=demo`
+      );
+      if (!response.ok) {
+        throw new Error("City not found");
+      }
+
+      const data = await response.json();
+      const result = data.geonames?.[0];
+
+      if (!result) {
+        throw new Error("No data found for the specified city.");
+      }
+
+      return {
+        content: [
+          {
+            type: "text",
+            text: `${result.name}, ${result.countryName} — Population: ${result.population}, Coordinates: (${result.lat}, ${result.lng})`
+          }
+        ]
+      };
+    } catch (error: unknown) {
+      const message =
+        error instanceof Error ? error.message : "An unknown error occurred";
+      return {
+        content: [
+          {
+            type: "text",
+            text: `Error fetching data for ${city}: ${message}`
+          }
+        ]
+      };
+    }
+  }
+);
+
 // Zip Code Tool
 const getZipInfo = server.tool(
   "get-zip-info",
