@@ -71,20 +71,6 @@ const getZipInfo = server.tool(
           }
         ]
       };
-    } catch (error: unknown) {
-      const message =
-        error instanceof Error ? error.message : "An unknown error occurred";
-      return {
-        content: [
-          {
-            type: "text",
-            text: `Error fetching data for ZIP code ${zip}: ${message}`
-          }
-        ]
-      };
-    }
-  }
-);
 // Get Chuck Norris joke tool
 const getChuckJoke = server.tool(
   "get-chuck-joke",
