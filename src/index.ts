@@ -1,7 +1,6 @@
 import express, { Request, Response } from "express";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
-import { z } from "zod";
 
 const server = new McpServer({
   name: "jokesMCP",
@@ -26,6 +25,11 @@ const server = new McpServer({
     {
       name: "get-yo-mama-joke",
       description: "Get a random Yo Mama joke",
+      parameters: {},
+    },
+     {
+      name: "get-country-data",
+      description: "Get a country data by name",
       parameters: {},
     },
   ],
