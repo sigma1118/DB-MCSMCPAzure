@@ -39,64 +39,59 @@ const server = new McpServer({
       parameters: {},
     },
      {
-      name: "get-city-info",
-      description: "Get basic travel information for a city using GeoNames API (no API key required)",
+      name: "get-pois",
+      description: "Get points of interest for a city using OpenTripMap API",
       parameters: {},
     },
   ],
 });
-//City info
-const getCityInfo = server.tool(
-  "get-city-info",
-  {
-    city: z.string().describe("City name to fetch information"),
-  },
-  async (params: { city: string }) => {
-    const city = params.city;
+const getPOIs = server.tool(
+  "get-pois",
+  "Get points of interest for a city using OpenTripMap API",
+  async (input: { city: string }) => {
+    const city = input.city;
     if (!city) {
       return {
         content: [
           {
             type: "text",
-            text: "Please provide a city name.",
-          },
-        ],
+            text: "Please provide a city name."
+          }
+        ]
       };
     }
 
     try {
-      const response = await fetch(
-        `http://api.geonames.org/searchJSON?q=${encodeURIComponent(city)}&maxRows=1&username=demo`
-      );
-      if (!response.ok) {
-        throw new Error("City not found");
-      }
+      // Step 1: Get coordinates for the city
+      const geoRes = await fetch(`https://nominatim.openstreetmap.org/search?city=${encodeURIComponent(city)}&format=json&limit=1`);
+      const geoData = await geoRes.json();
+      if (!geoData.length) throw new Error("City not found");
 
-      const data = await response.json();
-      const result = data.geonames?.[0];
+      const { lat, lon } = geoData[0];
 
-      if (!result) {
-        throw new Error("No data found for the specified city.");
-      }
+      // Step 2: Get POIs near the city
+      const poiRes = await fetch(`https://api.opentripmap.com/0.1/en/places/radius?radius=1000&lon=${lon}&lat=${lat}&limit=5`);
+      const poiData = await poiRes.json();
+
+      const places = poiData.features?.map((p: any) => p.properties.name).filter(Boolean);
 
       return {
         content: [
           {
             type: "text",
-            text: `${result.name}, ${result.countryName} — Population: ${result.population}, Coordinates: (${result.lat}, ${result.lng})`,
-          },
-        ],
+            text: `Top places to visit in ${city}: ${places?.join(", ") || "No points of interest found."}`
+          }
+        ]
       };
     } catch (error: unknown) {
-      const message =
-        error instanceof Error ? error.message : "An unknown error occurred";
+      const message = error instanceof Error ? error.message : "An unknown error occurred";
       return {
         content: [
           {
             type: "text",
-            text: `Error fetching data for ${city}: ${message}`,
-          },
-        ],
+            text: `Error fetching POIs for ${city}: ${message}`
+          }
+        ]
       };
     }
   }
