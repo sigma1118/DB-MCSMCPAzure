@@ -55,12 +55,8 @@ const getZipInfo = server.tool(
         ]
       };
     }
-
     try {
       const response = await fetch(`http://api.zippopotam.us/us/${zip}`);
-      if (!response.ok) {
-        throw new Error("ZIP code not found");
-      }
       const data = await response.json();
       const place = data.places[0];
       return {
