@@ -33,9 +33,30 @@ const server = new McpServer({
       description: "Get a country data by name",
       parameters: {},
     },
+     {
+      name: "get-exchange-rate",
+      description: "Get the current EUR/USD exchange rate",
+      parameters: {},
+    },
   ],
 });
-
+// Get current EUR/USD exchange rate tool
+const getExchangeRate = server.tool(
+  "get-exchange-rate",
+  "Get the current EUR/USD exchange rate",
+  async () => {
+    const response = await fetch("https://www.freeforexapi.com/api/live?pairs=EURUSD");
+    const data = await response.json();
+    return {
+      content: [
+        {
+          type: "text",
+          text: `Current EUR/USD rate: ${data.rates["EURUSD"].rate}`,
+        },
+      ],
+    };
+  }
+);
 // Get Chuck Norris joke tool
 const getChuckJoke = server.tool(
   "get-chuck-joke",
