@@ -5,7 +5,7 @@ import { z } from "zod";
 
 const server = new McpServer({
   name: "Geography MCP",
-  description: "A server that provides jokes",
+  description: "A server that provides geography information",
   version: "1.0.0",
   tools: [
     /*
