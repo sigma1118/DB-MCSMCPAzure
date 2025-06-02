@@ -321,7 +321,7 @@ Now you have an MCP Server running in Azure, and a connector available in the Po
 1. In the `Test your agent` pane send the following message:
 
     ```text
-    Can I get a Chuck Norris joke?
+   Tell me about the United States
     ```
 
     This will now show a Chuck Norris joke - instead of the additional permissions.
