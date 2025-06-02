@@ -314,9 +314,10 @@ Now you have an MCP Server running in Azure, and a connector available in the Po
    Tell me about the United States
     ```
 
-    This will now show a Chuck Norris joke - instead of the additional permissions.
+   This will now show you information about the country. 
 
-    ![Chuck Norris joke](./assets/chucknorrisjoke.png)
+    ![image](https://github.com/user-attachments/assets/e633d4a4-f63a-4e26-810e-4f2a71583701)
+
 
 1. In the `Test your agent` pane send the following message:
 
@@ -324,21 +325,22 @@ Now you have an MCP Server running in Azure, and a connector available in the Po
     Tell me about zip code 08008. 
     ```
 
-    This will now show a Dad joke.
+    This will now show zip code information
 
-    ![Dad joke](./assets/dadjoke.png)
+  ![image](https://github.com/user-attachments/assets/4a6d3321-3de4-4ef6-abef-43e68515e4ac)
 
 
-And that was the Jokes MCP Server working in Microsoft Copilot Studio. This is also the end of the lab! Hopefully you liked the lab. Please take the time to fill in our [feedback form](https://aka.ms/mcsmcp/lab/feedback).
 
-## Jokes MCP Server details
+And that was the Geography MCP Server working in Microsoft Copilot Studio. This is also the end of the lab! Hopefully you liked the lab. Please take the time to fill in our [feedback form](https://aka.ms/mcsmcp/lab/feedback).
+
+## Geography MCP Server details
 
 This is a [MCP](https://modelcontextprotocol.io/introduction) server built on the [TypeScript SDK](https://github.com/modelcontextprotocol/typescript-sdk).
 
-With this MCP Server, you will able to fetch jokes from the following websites:
-- [chucknorris.io](https://api.chucknorris.io/)
-- [icanhazdadjoke.com](https://icanhazdadjoke.com/)
-- [yomama-jokes.com](https://www.yomama-jokes.com)
+With this MCP Server, you will able to fetch geography information from the following websites:
+- https://nominatim.openstreetmap.org/
+- https://restcountries.com/v3.1/
+- http://api.zippopotam.us/us/
 
 If you want to run the server locally, make sure to run `npm install` in the root of the repository.
 
@@ -348,21 +350,17 @@ After that you can run `npm run build` to build the server and `npm start` to st
 
 The following tools are included:
 
-### get-chuck-joke
+### get-country-data
 
-This tool retrieves a random Chuck Norris Joke from [chucknorris.io](https://api.chucknorris.io/).
+This tool retrieves a country data by country name from https://restcountries.com/v3.1/
 
-### get-chuck-categories
+### get-city-details
 
-This tool retrieves the available categories from [chucknorris.io](https://api.chucknorris.io/).
+This tool retrieves city information from https://nominatim.openstreetmap.org/
 
-### get-dad-joke
+### get-zip-info
 
-This tool retrieves a random Dad Joke from [icanhazdadjoke.com](https://icanhazdadjoke.com/).
-
-### get-yo-mama-joke
-
-This tool retrieves a random Yo Mama Joke from [yomama-jokes.com](https://www.yomama-jokes.com).
+This tool retrieves information about valid US Zip Codes from http://api.zippopotam.us/us/
 
 ## Known issues and planned improvements
 
