@@ -8,6 +8,7 @@ const server = new McpServer({
   description: "A server that provides jokes",
   version: "1.0.0",
   tools: [
+    /*
     {
       name: "get-chuck-joke",
       description: "Get a random Chuck Norris joke",
@@ -28,6 +29,7 @@ const server = new McpServer({
       description: "Get a random Yo Mama joke",
       parameters: {},
     },
+    */
      {
       name: "get-country-data",
       description: "Get a country data by name",
@@ -45,6 +47,7 @@ const server = new McpServer({
     },
   ],
 });
+//Get City Details
 const getCityDetails = server.tool(
   "get-city-details",
   {
@@ -141,7 +144,8 @@ const getZipInfo = server.tool(
   }
 );
 
-// Get Chuck Norris joke tool
+/*
+Get Chuck Norris joke tool
 const getChuckJoke = server.tool(
   "get-chuck-joke",
   "Get a random Chuck Norris joke",
@@ -198,6 +202,7 @@ const getDadJoke = server.tool(
     };
   }
 );
+*/
 // 2025-05-29 - Add get-country-data tool
 const getCountryData = server.tool(
   "get-country-data",
@@ -242,6 +247,7 @@ const getCountryData = server.tool(
     };
   }
 );
+/*
 // Get Yo Mama joke tool
 const getYoMamaJoke = server.tool(
   "get-yo-mama-joke",
@@ -261,7 +267,7 @@ const getYoMamaJoke = server.tool(
     };
   }
 );
-
+*/
 const app = express();
 
 // to support multiple simultaneous connections we have a lookup object from
