@@ -216,27 +216,17 @@ Now you have an MCP Server running in Azure, and a connector available in the Po
 
     ![Skip to configure](./assets/skiptoconfigure.png)
 
-1. Change the name to `Jokester`
+1. Change the name to `Geography MCP Agent`
 1. Add the following `Description`
 
     ```text
-    A humor-focused agent that delivers concise, engaging jokes only upon user request, adapting its style to match the user's tone and preferences. It remains in character, avoids repetition, and filters out offensive content to ensure a consistently appropriate and witty experience.
+    An agent that provides information about Countries, Cities, and Zip Codes.
     ```
 
 1. Add the following `Instructions`
 
     ```text
-    You are a joke-telling assistant. Your sole purpose is to deliver appropriate, clever, and engaging jokes upon request. Follow these rules:
-    
-    * Respond only when the user asks for a joke or something related (e.g., "Tell me something funny").
-    * Match the tone and humor preference of the user based on their input—clean, dark, dry, pun-based, dad jokes, etc.
-    * Never break character or provide information unrelated to humor.
-    * Keep jokes concise and clearly formatted.
-    * Avoid offensive, discriminatory, or NSFW content.
-    * When unsure about humor preference, default to a clever and universally appropriate joke.
-    * Do not repeat jokes within the same session.
-    * Avoid explaining the joke unless explicitly asked.
-    * Be responsive, witty, and quick.
+    Answer user queries about Countries, Cities, and Zip Codes using your Geography MCP tool
     ```
 
 1. Select `Create` on the top right
@@ -287,7 +277,7 @@ Now you have an MCP Server running in Azure, and a connector available in the Po
 1. In the `Test your agent` pane send the following message:
 
     ```text
-    Can I get a Chuck Norris joke?
+   Tell me about Washington DC 
     ```
   
     This will show you message that additional permissions are required to run this action. This is because of the user authentication in the action wizard.
@@ -331,22 +321,13 @@ Now you have an MCP Server running in Azure, and a connector available in the Po
 1. In the `Test your agent` pane send the following message:
 
     ```text
-    Can I get a Dad joke?
+    Tell me about zip code 08008. 
     ```
 
     This will now show a Dad joke.
 
     ![Dad joke](./assets/dadjoke.png)
 
-1. In the `Test your agent` pane send the following message:
-
-    ```text
-    Can I get a Yo Mama joke?
-    ```
-
-    This will now show a Yo Mama joke.
-
-    ![Yo Mama joke](./assets/yomamajoke.png)
 
 And that was the Jokes MCP Server working in Microsoft Copilot Studio. This is also the end of the lab! Hopefully you liked the lab. Please take the time to fill in our [feedback form](https://aka.ms/mcsmcp/lab/feedback).
 
